@@ -1,4 +1,4 @@
-import './globals.css';import Link from 'next/link';import Search from './search';import Logo from './logo';
+import './globals.css';import './sfondo.css';import Link from 'next/link';import Search from './search';import Logo from './logo';
 export const metadata={title:'La Tana Movies',description:'I film che guardiamo insieme'};
 export default function Root({children}){
  return <html lang="it"><body><div className="wrap">

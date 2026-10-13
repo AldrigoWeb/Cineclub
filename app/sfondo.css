@@ -1,0 +1,4 @@
+html:root{--bg:#180d12;--sf:#25141c;--tx:#f5e9ec;--mu:#b5a0a8;--ac:#e0546f;--ac2:#f0c05a;--ln:#3d2631;color-scheme:dark}
+body{background:#180d12}
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(24,13,18,.78),rgba(24,13,18,.92)),url(/sfondo.webp) center 40%/cover no-repeat}
+body:has(.login)::before{background:linear-gradient(rgba(24,13,18,.45),rgba(24,13,18,.8)),url(/sfondo.webp) center 40%/cover no-repeat}
