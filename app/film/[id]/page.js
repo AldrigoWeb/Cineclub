@@ -16,7 +16,7 @@ export default async function Film({params}){
   <section className="mh">
    <div className="poster">{m.poster_path?<img src={img(m.poster_path,'w500')} alt={m.title}/>:<b>{m.title}</b>}</div>
    <div><h2>{m.title}</h2>
-    <div className="meta">{(m.release_date||'').slice(0,4)}{dir&&`, di ${dir}`}{m.runtime?`, ${m.runtime} min`:''}<br/>{(m.genres||[]).map(g=>g.name).join(', ')}</div>
+    <div className="meta">{(m.release_date||'').slice(0,4)}{dir&&<>, di <a href={`/?regista=${encodeURIComponent(dir)}`} style={{textDecoration:'underline'}}>{dir}</a></>}{m.runtime?`, ${m.runtime} min`:''}<br/>{(m.genres||[]).map(g=>g.name).join(', ')}</div>
     {a!=null&&<p><span className="stars">{stars(a)}</span> {a.toFixed(1)} su {rv.length} voti del gruppo</p>}
     {m.tagline&&<p><i>{m.tagline}</i></p>}<p>{m.overview||'Trama non disponibile in italiano.'}</p>
     {cast&&<p className="meta">Cast: {cast}</p>}
