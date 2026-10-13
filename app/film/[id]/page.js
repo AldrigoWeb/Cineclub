@@ -1,7 +1,7 @@
-import {db} from '../../../lib/db';import {t} from '../../../lib/tmdb';import {Card,img,stars} from '../../ui';import Actions from './actions';
+import {db} from '../../../lib/db';import {t} from '../../../lib/tmdb';import {Card,img,stars} from '../../ui';import Actions from './actions';import ReviewItem from './review-item';import {getMe} from '../../../lib/me';
 export const dynamic='force-dynamic';
 export default async function Film({params}){
- const {id}=await params;
+ const {id}=await params;const me=await getMe();
  const m=await t(`/movie/${id}`,{append_to_response:'credits,recommendations'});
  const [{data:l},{data:rv=[]}]=await Promise.all([
   db.from('library').select('status').eq('tmdb_id',id).maybeSingle(),
@@ -22,7 +22,7 @@ export default async function Film({params}){
     {cast&&<p className="meta">Cast: {cast}</p>}
     <Actions id={+id} status={l?.status||null}/></div></section>
   <div className="row"><h2>Recensioni ({rv.length})</h2></div>
-  {rv.length?<div className="feed">{rv.map(r=><article className="rev" key={r.id}><div><span className="stars">{stars(r.rating)}</span> <b>{r.author}</b><p>{r.comment}</p></div></article>)}</div>:<div className="empty">Ancora nessuna recensione. Scrivi la prima.</div>}
+  {rv.length?<div className="feed">{rv.map(r=><ReviewItem key={r.id} r={r} mine={!!me&&r.author.trim().toLowerCase()===me.name.trim().toLowerCase()}/>)}</div>:<div className="empty">Ancora nessuna recensione. Scrivi la prima.</div>}
   {sim.length>0&&<><div className="row"><h2>Se ti è piaciuto, guarda anche</h2></div>
    <div className="grid">{sim.map(x=><Card key={x.id} id={x.id} title={x.title} year={(x.release_date||'').slice(0,4)} poster={x.poster_path}/>)}</div></>}
  </>;

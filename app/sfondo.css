@@ -3,3 +3,14 @@ body{background:#180d12}
 body::before{content:'';position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(24,13,18,.78),rgba(24,13,18,.92)),url(/sfondo.webp) center 40%/cover no-repeat}
 body:has(.login)::before{background:linear-gradient(rgba(24,13,18,.45),rgba(24,13,18,.8)),url(/sfondo.webp) center 40%/cover no-repeat}
 select{font:inherit;background:var(--sf);color:var(--tx);border:1px solid var(--ln);border-radius:10px;padding:10px 12px;width:100%}
+.chi{max-width:640px;margin:4vh auto;text-align:center;display:grid;gap:22px}
+.profs{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+.prof{background:none;border:0;color:inherit;font:inherit;cursor:pointer;display:grid;gap:8px;justify-items:center}
+.av{width:92px;height:92px;border-radius:12px;display:grid;place-items:center;font-size:44px;border:2px solid transparent}
+.prof:hover .av{border-color:var(--tx)}
+details summary{list-style:none;display:inline-block;cursor:pointer}details .rf{margin-top:14px;text-align:left}
+.pk{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.pk label{position:relative}.pk input{position:absolute;opacity:0}
+.pk label span{display:grid;place-items:center;width:44px;height:44px;border-radius:10px;font-size:24px;border:2px solid var(--ln);cursor:pointer}
+.pk input:checked+span{border-color:var(--ac2);box-shadow:0 0 0 2px var(--ac2)}
+.me{display:flex;align-items:center;gap:8px;background:var(--sf);color:var(--tx);border:1px solid var(--ln);border-radius:999px;padding:4px 14px 4px 4px;cursor:pointer;font:inherit}
+.me .av{width:30px;height:30px;font-size:16px;border-radius:50%}
