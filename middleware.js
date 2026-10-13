@@ -4,4 +4,4 @@ export function middleware(req){
  if(p==='/login'||p==='/api/login')return;
  if(req.cookies.get('cc')?.value!==process.env.SITE_PASSWORD)return NextResponse.redirect(new URL('/login',req.url));
 }
-export const config={matcher:['/((?!_next|favicon.ico).*)']};
+export const config={matcher:['/((?!_next|favicon.ico|icon.png|logo.webp|logo-sm.webp).*)']};
