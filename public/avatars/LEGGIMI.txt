@@ -1,0 +1,3 @@
+Metti qui le immagini dei profili (png, jpg, webp, gif, svg).
+Meglio se quadrate, circa 200x200 px.
+Dopo averle aggiunte riavvia npm run dev.

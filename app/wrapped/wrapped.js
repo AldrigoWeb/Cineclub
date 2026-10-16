@@ -1,5 +1,5 @@
 'use client';
-import {useEffect,useRef,useState} from 'react';import Link from 'next/link';import {img} from '../ui';
+import {useEffect,useRef,useState} from 'react';import Link from 'next/link';import {img} from '../ui';import {Avatar} from '../avatar';
 const HUE=[345,40,175,265,210,320];
 export default function Wrapped({slides}){
  const [i,setI]=useState(0);const x0=useRef(0);const n=slides.length;
@@ -17,7 +17,7 @@ export default function Wrapped({slides}){
   <div className="ws" key={i}>
    <small>{s.c}</small>
    {s.p&&<div className="poster wp"><img src={img(s.p,'w500')} alt=""/></div>}
-   {s.av&&<span className="av wa" style={{background:s.av.color}}>{s.av.emoji}</span>}
+   {s.av&&<Avatar v={s.av.emoji} color={s.av.color} className="av wa"/>}
    {s.av&&<div className="wn">{s.av.name}</div>}
    <h2>{s.t}</h2>
    {s.q&&<blockquote>“{s.q}”</blockquote>}

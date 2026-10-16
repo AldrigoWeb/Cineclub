@@ -2,7 +2,9 @@
   "name": "cineclub",
   "private": true,
   "scripts": {
+    "predev": "node scripts/avatars.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/avatars.mjs",
     "build": "next build",
     "start": "next start"
   },

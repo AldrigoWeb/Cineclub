@@ -5,4 +5,4 @@ export function middleware(req){
  if(req.cookies.get('cc')?.value!==process.env.SITE_PASSWORD)return NextResponse.redirect(new URL('/login',req.url));
  if(!req.cookies.get('me')&&p!=='/chi'&&p!=='/api/profile')return NextResponse.redirect(new URL('/chi',req.url));
 }
-export const config={matcher:['/((?!_next|favicon.ico|icon.png|logo.webp|logo-sm.webp|sfondo.webp).*)']};
+export const config={matcher:['/((?!_next|favicon.ico|icon.png|logo.webp|logo-sm.webp|sfondo.webp|avatars).*)']};
