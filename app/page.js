@@ -1,10 +1,11 @@
-import {db} from '../lib/db';import {t} from '../lib/tmdb';import {Card,stars} from './ui';import FiltroRegista from './filtro-regista';
+import {db} from '../lib/db';import {t} from '../lib/tmdb';import {Card,stars} from './ui';import FiltroRegista from './filtro-regista';import {runtimes,sum} from '../lib/stats';
 export const dynamic='force-dynamic';
 export default async function Home({searchParams}){
  const reg=(await searchParams).regista||'';
  const [{data:all=[]},{data:rv0=[]}]=await Promise.all([
   db.from('library').select('*').order('added_at',{ascending:false}),
   db.from('reviews').select('*').order('created_at',{ascending:false})]);
+ const mins=sum(await runtimes(all.filter(f=>f.status==='seen')));
  const registi=Object.entries(all.reduce((c,f)=>{if(f.director)c[f.director]=(c[f.director]||0)+1;return c},{})).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
  const lib=reg?all.filter(f=>f.director===reg):all;
  const ids=new Set(lib.map(f=>f.tmdb_id)),rv=reg?rv0.filter(r=>ids.has(r.tmdb_id)):rv0;
@@ -21,6 +22,7 @@ export default async function Home({searchParams}){
  const recs=[...sc.values()].sort((a,b)=>b.v-a.v).slice(0,12);
  const byId=Object.fromEntries(lib.map(f=>[f.tmdb_id,f]));
  return <>
+  <div className="stats">{[[all.filter(f=>f.status==='seen').length,'Film visti'],[`${Math.floor(mins/60)} h`,'Ore di cinema'],[rv0.length,'Recensioni'],[all.filter(f=>f.status==='want').length,'Da vedere'],[registi.length,'Registi']].map(([v,l])=><div className="stat" key={l}><b>{v}</b><span>{l}</span></div>)}</div>
   <div className="row"><h2>{reg?`Film di ${reg}`:'Filtra per regista'}</h2><div style={{display:'flex',gap:10,alignItems:'center'}}>{registi.length>0&&<FiltroRegista registi={registi} sel={reg}/>}{reg&&<a href="/" className="btn">Tutti i film</a>}</div></div>
   {!reg&&<>
   <div className="row"><h2>Da guardare dopo</h2><span>Simili ai film che avete amato di più</span></div>

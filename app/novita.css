@@ -1,0 +1,27 @@
+/* header: ricerca al centro, pulsanti a destra */
+header .nav{display:flex;gap:8px}
+.btn.fufu{background:linear-gradient(135deg,var(--ac),var(--ac2));border-color:transparent;color:#2a1620;font-weight:700;letter-spacing:.03em}
+.btn.fufu:hover{filter:brightness(1.1)}
+@media(max-width:760px){header .search{order:5;flex-basis:100%;max-width:none}}
+/* contatori in alto */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:4px 0 8px}
+.stat{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font:700 30px/1.1 Georgia,serif;color:var(--ac2)}
+.stat span{color:var(--mu);font-size:13px}
+/* wrapped */
+.wr{position:fixed;inset:0;z-index:50;display:grid;place-items:center;overflow:hidden;color:#fff;
+ background:radial-gradient(circle at 30% 15%,hsl(var(--h) 55% 24%),#180d12 72%);transition:background .4s}
+.wbar{position:absolute;top:14px;left:14px;right:60px;display:flex;gap:5px;z-index:4}
+.wbar span{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.22)}.wbar span.on{background:#fff}
+.wx{position:absolute;top:6px;right:12px;z-index:5;font-size:22px;padding:8px;color:#fff}
+.wz{position:absolute;top:50px;bottom:0;border:0;background:none;cursor:pointer;z-index:2}
+.wz.l{left:0;width:30%}.wz.r{right:0;width:70%}
+.ws{position:relative;z-index:3;text-align:center;display:grid;gap:14px;justify-items:center;padding:0 28px;max-width:640px;animation:wi .45s ease both;pointer-events:none}
+.ws .btn{pointer-events:auto}
+.ws small{letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7);font-size:13px}
+.ws h2{font-size:clamp(38px,10vw,80px);text-wrap:balance}
+.ws p{margin:0;font-size:clamp(16px,3.4vw,22px);color:rgba(255,255,255,.85)}
+.ws blockquote{margin:0;font:italic clamp(18px,4vw,26px)/1.4 Georgia,serif}
+.wp{width:min(210px,46vw)}
+.wa{width:120px;height:120px;font-size:60px}.wn{font-size:20px;font-weight:600}
+@keyframes wi{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}

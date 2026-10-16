@@ -23,7 +23,7 @@ export default function Sfida({films}){
   <div className="duel">{pair.map(f=><button key={f.tmdb_id} className="opt" onClick={()=>pick(f)}><Film f={f}/></button>)}</div>
   <div className="prog"><button className="btn" onClick={()=>setG(null)}>Esci</button></div></>}
  return <>
-  <div className="row"><h2>Sfida tra film</h2><span>{films.length} film visti</span></div>
+  <div className="row"><h2>UwUFUFU</h2><span>Sfida tra film · {films.length} film visti</span></div>
   <p className="prog" style={{textAlign:'left'}}>Due film alla volta: scegli il tuo preferito, resta in gara e sfida il successivo, fino al vincitore.</p>
   <div className="seg">{[['all','Tutti'],['genre','Per genere'],['director','Per regista']].map(([k,l])=>
    <button key={k} className={'btn'+(mode===k?' on':'')} onClick={()=>change(k)}>{l}</button>)}</div>
