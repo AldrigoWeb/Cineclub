@@ -1,4 +1,4 @@
-import {db} from '../lib/db';import {t} from '../lib/tmdb';import {Card,stars} from './ui';import FiltroRegista from './filtro-regista';import {runtimes,sum} from '../lib/stats';
+import {db} from '../lib/db';import {t} from '../lib/tmdb';import {Card,stars} from './ui';import FiltroRegista from './filtro-regista';import HomeReviews from './home-reviews';import {runtimes,sum} from '../lib/stats';
 export const dynamic='force-dynamic';
 export default async function Home({searchParams}){
  const reg=(await searchParams).regista||'';
@@ -34,8 +34,6 @@ export default async function Home({searchParams}){
   {seen.length?<div className="grid">{seen.map(f=><Card key={f.tmdb_id} id={f.tmdb_id} title={f.title} year={f.year} poster={f.poster}
    sub={<>{avg[f.tmdb_id]!=null?<><span className="stars">{stars(avg[f.tmdb_id])}</span> {avg[f.tmdb_id].toFixed(1)}</>:f.year}{f.added_by&&<div className="why">aggiunto da {f.added_by}</div>}</>}/>)}</div>:<div className="empty">Nessun film visto per ora.</div>}
   <div className="row"><h2>Tutte le recensioni</h2><span>{rv.length} recensioni</span></div>
-  <div className="feed">{rv.map(r=>{const f=byId[r.tmdb_id];return <article className="rev" key={r.id}>
-   <div><a href={`/film/${r.tmdb_id}`}><h3>{f?.title||'Film'}</h3></a><span className="stars">{stars(r.rating)}</span>
-   <p>{r.comment}</p><small>{r.author}, {new Date(r.created_at).toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'})}</small></div></article>})}</div>
+  {rv.length?<HomeReviews items={rv.map(r=>({id:r.id,tmdb_id:r.tmdb_id,title:byId[r.tmdb_id]?.title||'Film',rating:r.rating,comment:r.comment,author:r.author,date:new Date(r.created_at).toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'})}))}/>:<div className="empty">Ancora nessuna recensione.</div>}
  </>;
 }
