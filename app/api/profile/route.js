@@ -25,6 +25,10 @@ export async function POST(req){
    const ids=(rv||[]).filter(r=>r.author.trim().toLowerCase()===old).map(r=>r.id);
    if(ids.length){const {error:e2}=await db.from('reviews').update({author:name}).in('id',ids);
     if(e2){await db.from('profiles').update({name:me.name,emoji:me.emoji,color:me.color}).eq('id',me.id);return go(req,'/profilo?e=3')}}
+   // anche "aggiunto da" nella libreria (se la colonna esiste)
+   const {data:lb}=await db.from('library').select('tmdb_id,added_by');
+   const lids=(lb||[]).filter(x=>x.added_by&&x.added_by.trim().toLowerCase()===old).map(x=>x.tmdb_id);
+   if(lids.length)await db.from('library').update({added_by:name}).in('tmdb_id',lids);
   }
   return go(req,'/profilo?ok=1')}
  if(act==='delete'){

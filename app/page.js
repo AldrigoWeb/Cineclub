@@ -29,10 +29,10 @@ export default async function Home({searchParams}){
   {recs.length?<div className="grid">{recs.map(({m,why})=><Card key={m.id} id={m.id} title={m.title} year={(m.release_date||'').slice(0,4)} poster={m.poster_path} sub={<div className="why">Perché avete visto {why.title}</div>}/>)}</div>
    :<div className="empty">Cerca un film qui sopra e segnalo come visto: i consigli arrivano da lì.</div>}</>}
   <div className="row"><h2>In lista</h2><span>{want.length} da vedere</span></div>
-  {want.length?<div className="grid">{want.map(f=><Card key={f.tmdb_id} id={f.tmdb_id} title={f.title} year={f.year} poster={f.poster}/>)}</div>:<div className="empty">Aggiungi un film alla libreria e comparirà qui.</div>}
+  {want.length?<div className="grid">{want.map(f=><Card key={f.tmdb_id} id={f.tmdb_id} title={f.title} year={f.year} poster={f.poster} sub={<>{f.year}{f.added_by&&<div className="why">aggiunto da {f.added_by}</div>}</>}/>)}</div>:<div className="empty">Aggiungi un film alla libreria e comparirà qui.</div>}
   <div className="row"><h2>La nostra libreria</h2><span>{seen.length} film visti</span></div>
   {seen.length?<div className="grid">{seen.map(f=><Card key={f.tmdb_id} id={f.tmdb_id} title={f.title} year={f.year} poster={f.poster}
-   sub={avg[f.tmdb_id]!=null?<><span className="stars">{stars(avg[f.tmdb_id])}</span> {avg[f.tmdb_id].toFixed(1)}</>:f.year}/>)}</div>:<div className="empty">Nessun film visto per ora.</div>}
+   sub={<>{avg[f.tmdb_id]!=null?<><span className="stars">{stars(avg[f.tmdb_id])}</span> {avg[f.tmdb_id].toFixed(1)}</>:f.year}{f.added_by&&<div className="why">aggiunto da {f.added_by}</div>}</>}/>)}</div>:<div className="empty">Nessun film visto per ora.</div>}
   <div className="row"><h2>Tutte le recensioni</h2><span>{rv.length} recensioni</span></div>
   <div className="feed">{rv.map(r=>{const f=byId[r.tmdb_id];return <article className="rev" key={r.id}>
    <div><a href={`/film/${r.tmdb_id}`}><h3>{f?.title||'Film'}</h3></a><span className="stars">{stars(r.rating)}</span>

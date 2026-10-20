@@ -30,16 +30,17 @@ export default function Ruota({films}){
  const opts=useMemo(()=>{if(mode!=='director'&&mode!=='genre')return [];const c={};
   base.forEach(f=>(mode==='genre'?f.genres||[]:[f.director].filter(Boolean)).forEach(k=>{c[k]=(c[k]||0)+1}));
   return Object.entries(c).filter(([,k])=>k>=2).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))},[base,mode]);
- const pool=useMemo(()=>mode==='any'?(ext?ext.films.filter(f=>!hideSeen||!seenIds.has(f.tmdb_id)).map(f=>({...f,director:ext.name})):[])
+ const ppl=mode==='any'||mode==='actor',role=mode==='actor'?'actor':'director';
+ const pool=useMemo(()=>ppl?(ext?ext.films.filter(f=>!hideSeen||!seenIds.has(f.tmdb_id)).map(f=>mode==='any'?{...f,director:ext.name}:f):[])
   :mode==='none'?base:val===''?[]:base.filter(f=>mode==='genre'?(f.genres||[]).includes(val):f.director===val),[base,mode,val,ext,hideSeen,seenIds]);
  const items=useMemo(()=>pick(pool,seed,MAX),[pool,seed]);
  const ready=items.length>=2&&!spinning;
  const reset=fn=>{if(spinning)return;fn();setRes(null)};
  const search=async e=>{e.preventDefault();if(q.trim().length<2||busy)return;setBusy(true);setErr('');setPeople([]);
-  try{const r=await fetch('/api/regista?q='+encodeURIComponent(q.trim())).then(x=>x.json());setPeople(r.people||[]);if(!(r.people||[]).length)setErr('Nessun regista trovato.')}
+  try{const r=await fetch('/api/regista?role='+role+'&q='+encodeURIComponent(q.trim())).then(x=>x.json());setPeople(r.people||[]);if(!(r.people||[]).length)setErr('Nessun regista trovato.')}
   catch{setErr('Ricerca non riuscita, riprova.')}setBusy(false)};
  const choose=async p=>{if(spinning)return;setBusy(true);setErr('');setRes(null);
-  try{const r=await fetch('/api/regista?id='+p.id).then(x=>x.json());setExt({name:p.name,films:r.films||[]});setPeople([]);setSeed(Math.floor(Math.random()*1e9)+2)}
+  try{const r=await fetch('/api/regista?role='+role+'&id='+p.id).then(x=>x.json());setExt({name:p.name,films:r.films||[]});setPeople([]);setSeed(Math.floor(Math.random()*1e9)+2)}
   catch{setErr('Non riesco a caricare i suoi film.')}setBusy(false)};
  const spin=()=>{
   const w=Math.floor(Math.random()*items.length),step=360/items.length,jit=(Math.random()-.5)*.7;
@@ -50,28 +51,28 @@ export default function Ruota({films}){
  };
  return <>
   <div className="row"><h2>La ruota</h2><span>Lasciamo scegliere al caso</span></div>
-  {mode!=='any'&&<div className="rseg"><span>Pesca da</span>{[['want','Da vedere'],['seen','Già visti'],['all','Tutti']].map(([k,l])=>
+  {!ppl&&<div className="rseg"><span>Pesca da</span>{[['want','Da vedere'],['seen','Già visti'],['all','Tutti']].map(([k,l])=>
    <button key={k} className={'btn'+(src===k?' on':'')} onClick={()=>reset(()=>{setSrc(k);setVal('')})}>{l}</button>)}</div>}
-  <div className="rseg"><span>Filtra per</span>{[['none','Niente'],['director','Regista'],['genre','Genere'],['any','Regista a scelta']].map(([k,l])=>
-   <button key={k} className={'btn'+(mode===k?' on':'')} onClick={()=>reset(()=>{setMode(k);setVal('')})}>{l}</button>)}</div>
+  <div className="rseg"><span>Filtra per</span>{[['none','Niente'],['director','Regista'],['genre','Genere'],['any','Regista a scelta'],['actor','Attore a scelta']].map(([k,l])=>
+   <button key={k} className={'btn'+(mode===k?' on':'')} onClick={()=>reset(()=>{setMode(k);setVal('');setExt(null);setPeople([]);setErr('');setQ('')})}>{l}</button>)}</div>
   {(mode==='director'||mode==='genre')&&(opts.length?<select value={val} onChange={e=>reset(()=>setVal(e.target.value))} aria-label="Filtro" className="rsel">
     <option value="">{mode==='genre'?'Scegli un genere…':'Scegli un regista…'}</option>
     {opts.map(([k,n])=><option key={k} value={k}>{k} ({n})</option>)}</select>
    :<div className="empty">Non ci sono {mode==='genre'?'generi':'registi'} con almeno 2 film in questa selezione.</div>)}
-  {mode==='any'&&<div className="rany">
-   <form onSubmit={search}><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Scrivi un regista, es. Nolan" aria-label="Cerca regista"/>
+  {ppl&&<div className="rany">
+   <form onSubmit={search}><input value={q} onChange={e=>setQ(e.target.value)} placeholder={mode==='actor'?'Scrivi un attore, es. Tom Hanks':'Scrivi un regista, es. Nolan'} aria-label="Cerca persona"/>
     <button className="btn p" disabled={busy||q.trim().length<2}>{busy?'…':'Cerca'}</button></form>
    {err&&<p className="err">{err}</p>}
    {people.length>0&&<div className="rpeople">{people.map(p=><button key={p.id} className="btn" onClick={()=>choose(p)}>{p.name}{p.known.length>0&&<small>{p.known.join(', ')}</small>}</button>)}</div>}
    {ext&&<label className="rchk"><input type="checkbox" checked={hideSeen} onChange={e=>reset(()=>setHideSeen(e.target.checked))}/> Escludi i film già visti da voi</label>}</div>}
   {items.length>=2?<div className="rwrap"><div className="rptr">▼</div><Wheel items={items} rot={rot} spinning={spinning}/></div>
-   :<div className="empty">{mode==='any'&&!ext?'Cerca un regista qui sopra per riempire la ruota con i suoi film.':pool.length===1?'Con un solo film non serve la ruota: ':'Servono almeno 2 film per far girare la ruota. '}{pool.length===1&&<Link href={`/film/${pool[0].tmdb_id}`} style={{textDecoration:'underline'}}>{pool[0].title}</Link>}</div>}
-  <div className="rinfo">{mode==='any'&&ext?`Film di ${ext.name}: `:''}{pool.length} film in gara{pool.length>MAX?`, ne ho estratti ${MAX} a caso`:''}</div>
+   :<div className="empty">{ppl&&!ext?`Cerca ${mode==='actor'?'un attore':'un regista'} qui sopra per riempire la ruota con i suoi film.`:pool.length===1?'Con un solo film non serve la ruota: ':'Servono almeno 2 film per far girare la ruota. '}{pool.length===1&&<Link href={`/film/${pool[0].tmdb_id}`} style={{textDecoration:'underline'}}>{pool[0].title}</Link>}</div>}
+  <div className="rinfo">{ppl&&ext?`Film di ${ext.name}: `:''}{pool.length} film in gara{pool.length>MAX?`, ne ho estratti ${MAX} a caso`:''}</div>
   <div className="btns" style={{justifyContent:'center'}}>
    <button className="btn p" disabled={!ready} onClick={spin}>{spinning?'Gira…':res?'Gira ancora':'Gira la ruota'}</button>
    {pool.length>MAX&&<button className="btn" disabled={spinning} onClick={()=>reset(()=>setSeed(Math.floor(Math.random()*1e9)+2))}>Rimescola</button>}</div>
   {res&&<div className="rwin"><small>Stasera si guarda</small>
    <Link href={`/film/${res.tmdb_id}`} className="card"><div className="poster">{res.poster?<img src={img(res.poster)} alt={res.title}/>:<b>{res.title}</b>}</div>
-    <div className="meta"><strong>{res.title}</strong>{[res.year,res.director].filter(Boolean).join(' · ')}</div></Link></div>}
+    <div className="meta"><strong>{res.title}</strong>{[res.year,res.director||(res.role&&`come ${res.role}`)].filter(Boolean).join(' · ')}</div></Link></div>}
  </>;
 }

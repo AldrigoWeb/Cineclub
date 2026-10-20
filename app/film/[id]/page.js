@@ -1,14 +1,15 @@
-import {db} from '../../../lib/db';import {t} from '../../../lib/tmdb';import {Card,img,stars} from '../../ui';import Actions from './actions';import ReviewItem from './review-item';import {getMe} from '../../../lib/me';
+import {db} from '../../../lib/db';import {t} from '../../../lib/tmdb';import {Card,img,stars} from '../../ui';import Actions from './actions';import ReviewList from './review-list';import AddedBy from './added-by';import {getMe} from '../../../lib/me';
 export const dynamic='force-dynamic';
 export default async function Film({params}){
  const {id}=await params;const me=await getMe();
  const m=await t(`/movie/${id}`,{append_to_response:'credits,recommendations'});
- const [{data:l},{data:rv=[]}]=await Promise.all([
-  db.from('library').select('status').eq('tmdb_id',id).maybeSingle(),
-  db.from('reviews').select('*').eq('tmdb_id',id).order('created_at',{ascending:false})]);
+ const [{data:l},{data:rv=[]},{data:pf}]=await Promise.all([
+  db.from('library').select('*').eq('tmdb_id',id).maybeSingle(),
+  db.from('reviews').select('*').eq('tmdb_id',id).order('created_at',{ascending:false}),
+  db.from('profiles').select('name').order('name')]);
  if(!m.title)return <div className="empty">Film non trovato.</div>;
  const dir=m.credits?.crew?.find(c=>c.job==='Director')?.name;
- const cast=(m.credits?.cast||[]).slice(0,6).map(c=>c.name).join(', ');
+ const cast=(m.credits?.cast||[]).slice(0,6);
  const a=rv.length?rv.reduce((s,x)=>s+x.rating,0)/rv.length:null;
  const sim=(m.recommendations?.results||[]).filter(x=>x.poster_path).slice(0,6);
  return <>
@@ -19,10 +20,11 @@ export default async function Film({params}){
     <div className="meta">{(m.release_date||'').slice(0,4)}{dir&&<>, di <a href={`/?regista=${encodeURIComponent(dir)}`} style={{textDecoration:'underline'}}>{dir}</a></>}{m.runtime?`, ${m.runtime} min`:''}<br/>{(m.genres||[]).map(g=>g.name).join(', ')}</div>
     {a!=null&&<p><span className="stars">{stars(a)}</span> {a.toFixed(1)} su {rv.length} voti del gruppo</p>}
     {m.tagline&&<p><i>{m.tagline}</i></p>}<p>{m.overview||'Trama non disponibile in italiano.'}</p>
-    {cast&&<p className="meta">Cast: {cast}</p>}
-    <Actions id={+id} status={l?.status||null}/></div></section>
+    {cast.length>0&&<p className="meta">Cast: {cast.map((c,i)=><span key={c.id}>{i>0&&', '}<a href={`/persona/${c.id}`} style={{textDecoration:'underline'}}>{c.name}</a></span>)}</p>}
+    <Actions id={+id} status={l?.status||null}/>
+    {l&&<AddedBy id={+id} cur={l.added_by||''} names={(pf||[]).map(p=>p.name)}/>}</div></section>
   <div className="row"><h2>Recensioni ({rv.length})</h2></div>
-  {rv.length?<div className="feed">{rv.map(r=><ReviewItem key={r.id} r={r} mine={!!me&&r.author.trim().toLowerCase()===me.name.trim().toLowerCase()}/>)}</div>:<div className="empty">Ancora nessuna recensione. Scrivi la prima.</div>}
+  {rv.length?<ReviewList items={rv.map(r=>({r,mine:!!me&&r.author.trim().toLowerCase()===me.name.trim().toLowerCase()}))}/>:<div className="empty">Ancora nessuna recensione. Scrivi la prima.</div>}
   {sim.length>0&&<><div className="row"><h2>Se ti è piaciuto, guarda anche</h2></div>
    <div className="grid">{sim.map(x=><Card key={x.id} id={x.id} title={x.title} year={(x.release_date||'').slice(0,4)} poster={x.poster_path}/>)}</div></>}
  </>;
