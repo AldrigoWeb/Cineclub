@@ -1,0 +1,10 @@
+.tv{display:grid;gap:16px;max-width:680px}
+.tq small{color:var(--mu);letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+.tq h3{font-size:20px;line-height:1.3}
+.to{display:grid;gap:8px}
+.top{text-align:left;border-color:var(--ac);box-shadow:0 0 8px rgba(224,84,111,.25);transition:transform .12s}
+.top:hover:not(:disabled){transform:translateX(3px);box-shadow:0 0 14px rgba(224,84,111,.5)}
+.top:disabled{opacity:1;cursor:default;box-shadow:none;border-color:var(--ln)}
+.top.ok{background:#2f7d4a;border-color:#4fd07a;color:#fff;box-shadow:0 0 14px rgba(79,208,122,.5)}
+.top.ko{background:#8a2438;border-color:#ff6b86;color:#fff;box-shadow:0 0 14px rgba(255,107,134,.45)}
+.tx{margin:4px 0 0;color:var(--tx)}
