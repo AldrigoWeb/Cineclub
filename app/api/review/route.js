@@ -1,6 +1,8 @@
 import {db} from '../../../lib/db';import {getMe} from '../../../lib/me';
 const bad=s=>Response.json({ok:0},{status:s});
-const clean=(rating,comment)=>(rating>=1&&rating<=5&&comment?.trim())?{rating,comment:comment.trim().slice(0,500)}:null;
+// voto da 0,5 a 5 a passi di mezzo popcorn
+const okRating=r=>typeof r==='number'&&r>=0.5&&r<=5&&(r*2)%1===0;
+const clean=(rating,comment)=>(okRating(rating)&&comment?.trim())?{rating,comment:comment.trim().slice(0,500)}:null;
 const res=error=>Response.json({ok:!error},{status:error?500:200});
 async function mine(id,me){const {data}=await db.from('reviews').select('author').eq('id',id).maybeSingle();
  return !!(data&&me&&data.author.trim().toLowerCase()===me.name.trim().toLowerCase())}

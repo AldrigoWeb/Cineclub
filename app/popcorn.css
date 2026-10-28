@@ -1,0 +1,11 @@
+.pop{white-space:nowrap;font-size:16px;line-height:1}
+.pop .pe{opacity:.4;filter:grayscale(1)}
+.popick{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pk2{position:relative;font-size:34px;line-height:1;user-select:none}
+.pk2.pf{opacity:1}
+.pk2.pe{opacity:.4;filter:grayscale(1)}
+.pk2.off{opacity:.18;filter:grayscale(1)}
+.pk2 button{position:absolute;top:0;bottom:0;width:50%;background:none;border:0;padding:0;margin:0;cursor:pointer}
+.pk2 .hl{left:0}
+.pk2 .hr{right:0}
+.pv{color:var(--mu);margin-left:8px;font-size:14px}
