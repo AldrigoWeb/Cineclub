@@ -1,4 +1,4 @@
-import {db} from '../lib/db';import {t} from '../lib/tmdb';import {Card,stars} from './ui';import FiltroRegista from './filtro-regista';import HomeReviews from './home-reviews';import {runtimes,sum} from '../lib/stats';
+import {db} from '../lib/db';import {t} from '../lib/tmdb';import {Card,stars} from './ui';import FiltroRegista from './filtro-regista';import HomeReviews from './home-reviews';import {runtimes,sum} from '../lib/stats';import Link from 'next/link';import './rail.css';
 export const dynamic='force-dynamic';
 export default async function Home({searchParams}){
  const reg=(await searchParams).regista||'';
@@ -23,15 +23,21 @@ export default async function Home({searchParams}){
  const byId=Object.fromEntries(lib.map(f=>[f.tmdb_id,f]));
  return <>
   <div className="stats">{[[all.filter(f=>f.status==='seen').length,'Film visti'],[`${Math.floor(mins/60)} h`,'Ore di cinema'],[rv0.length,'Recensioni'],[all.filter(f=>f.status==='want').length,'Da vedere'],[registi.length,'Registi']].map(([v,l])=><div className="stat" key={l}><b>{v}</b><span>{l}</span></div>)}</div>
+  <nav className="hub">
+   <Link href="/ruota"><b>🎡 Ruota</b><span>Lasciamo scegliere al caso</span></Link>
+   <Link href="/trivia"><b>🧠 Trivia</b><span>Tre domande della settimana</span></Link>
+   <Link href="/wrapped"><b>🎞️ Wrapped</b><span>Il riassunto del cineclub</span></Link>
+   <Link href="/sfida"><b>⚔️ UwUFUFU</b><span>Sfida tra film, uno contro uno</span></Link>
+  </nav>
   <div className="row"><h2>{reg?`Film di ${reg}`:'Filtra per regista'}</h2><div style={{display:'flex',gap:10,alignItems:'center'}}>{registi.length>0&&<FiltroRegista registi={registi} sel={reg}/>}{reg&&<a href="/" className="btn">Tutti i film</a>}</div></div>
   {!reg&&<>
   <div className="row"><h2>Da guardare dopo</h2><span>Simili ai film che avete amato di più</span></div>
-  {recs.length?<div className="grid">{recs.map(({m,why})=><Card key={m.id} id={m.id} title={m.title} year={(m.release_date||'').slice(0,4)} poster={m.poster_path} sub={<div className="why">Perché avete visto {why.title}</div>}/>)}</div>
+  {recs.length?<div className="rail">{recs.map(({m,why})=><Card key={m.id} id={m.id} title={m.title} year={(m.release_date||'').slice(0,4)} poster={m.poster_path} sub={<div className="why">Perché avete visto {why.title}</div>}/>)}</div>
    :<div className="empty">Cerca un film qui sopra e segnalo come visto: i consigli arrivano da lì.</div>}</>}
   <div className="row"><h2>In lista</h2><span>{want.length} da vedere</span></div>
-  {want.length?<div className="grid">{want.map(f=><Card key={f.tmdb_id} id={f.tmdb_id} title={f.title} year={f.year} poster={f.poster} sub={<>{f.year}{f.added_by&&<div className="why">aggiunto da {f.added_by}</div>}</>}/>)}</div>:<div className="empty">Aggiungi un film alla libreria e comparirà qui.</div>}
+  {want.length?<div className="rail">{want.map(f=><Card key={f.tmdb_id} id={f.tmdb_id} title={f.title} year={f.year} poster={f.poster} sub={<>{f.year}{f.added_by&&<div className="why">aggiunto da {f.added_by}</div>}</>}/>)}</div>:<div className="empty">Aggiungi un film alla libreria e comparirà qui.</div>}
   <div className="row"><h2>La nostra libreria</h2><span>{seen.length} film visti</span></div>
-  {seen.length?<div className="grid">{seen.map(f=><Card key={f.tmdb_id} id={f.tmdb_id} title={f.title} year={f.year} poster={f.poster}
+  {seen.length?<div className="rail">{seen.map(f=><Card key={f.tmdb_id} id={f.tmdb_id} title={f.title} year={f.year} poster={f.poster}
    sub={<>{avg[f.tmdb_id]!=null?<><span className="stars">{stars(avg[f.tmdb_id])}</span> {avg[f.tmdb_id].toFixed(1)}</>:f.year}{f.added_by&&<div className="why">aggiunto da {f.added_by}</div>}</>}/>)}</div>:<div className="empty">Nessun film visto per ora.</div>}
   <div className="row"><h2>Tutte le recensioni</h2><span>{rv.length} recensioni</span></div>
   {rv.length?<HomeReviews items={rv.map(r=>({id:r.id,tmdb_id:r.tmdb_id,title:byId[r.tmdb_id]?.title||'Film',rating:r.rating,comment:r.comment,author:r.author,date:new Date(r.created_at).toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'})}))}/>:<div className="empty">Ancora nessuna recensione.</div>}
