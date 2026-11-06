@@ -9,11 +9,11 @@ export default function Trivia({qs,week,posters={}}){
  const pct=qs.length?done/qs.length*100:0;
  return <div className="tr">
   <header className="trh">
-   <div><small>Questa settimana</small><h2>Trivia del cineclub</h2></div>
+   <div><small>Oggi</small><h2>Trivia del giorno</h2></div>
    <div className="score"><b>{ok}</b><span>/{qs.length}</span></div>
   </header>
   <div className="trbar"><i style={{width:pct+'%'}}/></div>
-  <p className="trsub">{done===qs.length?`Finito: ${ok} su ${qs.length} indovinate`:done?`${done} di ${qs.length} risposte`:'Tre domande, zero pressione.'}</p>
+  <p className="trsub">{done===qs.length?`Finito: ${ok} su ${qs.length} indovinate`:done?`${done} di ${qs.length} risposte`:'Qualche domanda, zero pressione.'}</p>
   <ol className="trl">{qs.map((q,n)=>{const s=a[q.id],ans=s!==undefined,p=posters[q.film_id];
    return <li key={q.id} className="tq2">
     <div className="tqh">
@@ -25,6 +25,6 @@ export default function Trivia({qs,week,posters={}}){
      return <button key={i} disabled={ans} onClick={()=>pick(q.id,i)} className={'to2'+cls}><span className="L">{'ABCD'[i]}</span>{o}</button>})}</div>
     {ans&&<p className={'trx '+(s===q.correct?'win':'lose')}><b>{s===q.correct?'Esatto!':'Non proprio.'}</b> {q.explanation}</p>}
    </li>})}</ol>
-  <p className="trfoot">Le domande le genera un'IA e a volte sbaglia: se una curiosità non torna, fatevi una risata. Nuove domande ogni lunedì.</p>
+  <p className="trfoot">Le domande le genera un'IA e a volte sbaglia: se una curiosità non torna, fatevi una risata. Nuove domande ogni giorno.</p>
  </div>;
 }
